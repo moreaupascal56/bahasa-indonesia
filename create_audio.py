@@ -3,6 +3,8 @@ import os
 
 import google.cloud.texttospeech as tts
 
+logging.basicConfig(level="INFO")
+
 
 def text_to_wav(text: str, filename: str, voice_name: str = "id-ID-Standard-A"):
     language_code = "-".join(voice_name.split("-")[:2])
@@ -18,7 +20,7 @@ def text_to_wav(text: str, filename: str, voice_name: str = "id-ID-Standard-A"):
         audio_config=audio_config,
     )
 
-    # create dirs in path if not exists
+    # create dirs from specified path if not exists
     os.makedirs(os.path.dirname(filename), exist_ok=True)
 
     with open(filename, "wb+") as out:
@@ -35,7 +37,11 @@ def generate_audio_files(
     pelajaran_directory="/home/pascal/Documents/github/bahasa_indonesia/pelajaran",
     audio_directory="/home/pascal/Documents/github/bahasa_indonesia/audio",
     overwrite_all=False,
+    overwrite_pelajaran=None,
 ):
+
+    if overwrite_pelajaran is None:
+        overwrite_pelajaran = []
 
     for pelajaran in os.listdir(pelajaran_directory):
         logging.debug(pelajaran)
@@ -45,6 +51,7 @@ def generate_audio_files(
             if (
                 os.path.exists(os.path.join(audio_directory, f"{pelajaran}/{file}"))
                 and not overwrite_all
+                and pelajaran not in overwrite_pelajaran
             ):
                 continue
             else:
