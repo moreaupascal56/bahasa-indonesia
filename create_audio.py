@@ -1,10 +1,10 @@
-import google.cloud.texttospeech as tts
-import os
 import logging
+import os
+
+import google.cloud.texttospeech as tts
 
 
-
-def text_to_wav(text: str ,filename:str, voice_name: str = "id-ID-Standard-A"):
+def text_to_wav(text: str, filename: str, voice_name: str = "id-ID-Standard-A"):
     language_code = "-".join(voice_name.split("-")[:2])
     text_input = tts.SynthesisInput(text=text)
     voice_params = tts.VoiceSelectionParams(
@@ -28,26 +28,35 @@ def text_to_wav(text: str ,filename:str, voice_name: str = "id-ID-Standard-A"):
 
 def parse_text(filepath):
     f = open(filepath, "r")
-    return f.read().splitlines() 
-
+    return f.read().splitlines()
 
 
 def generate_audio_files(
-    pelajaran_directory = "/home/pascal/Documents/github/bahasa_indonesia/pelajaran",
-    audio_directory = "/home/pascal/Documents/github/bahasa_indonesia/audio"
+    pelajaran_directory="/home/pascal/Documents/github/bahasa_indonesia/pelajaran",
+    audio_directory="/home/pascal/Documents/github/bahasa_indonesia/audio",
+    overwrite_all=False,
 ):
 
     for pelajaran in os.listdir(pelajaran_directory):
         logging.debug(pelajaran)
         pelajaran_path = os.path.join(pelajaran_directory, pelajaran)
         for file in os.listdir(pelajaran_path):
-            i=1 # initialize incremental var to name the audio files
             file_path = os.path.join(pelajaran_path, file)
-            for line in parse_text(file_path):
-                text_to_wav(
-                    text=line,
-                    filename=os.path.join(audio_directory,f"{pelajaran}/{file}/{i}.wav")
-                )
-                i+=1
+            if (
+                os.path.exists(os.path.join(audio_directory, f"{pelajaran}/{file}"))
+                and not overwrite_all
+            ):
+                continue
+            else:
+                i = 1  # initialize incremental var to name the audio files
+                for line in parse_text(file_path):
+                    text_to_wav(
+                        text=line,
+                        filename=os.path.join(
+                            audio_directory, f"{pelajaran}/{file}/{i}.wav"
+                        ),
+                    )
+                    i += 1
+
 
 generate_audio_files()
