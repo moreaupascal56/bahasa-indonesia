@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "bahasa-indonesia"
+version = "0.1.0"
+description = ""
+authors = ["moreaupascal56 <moreaupascal56@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+pydub = "^0.25.1"
+google-cloud-texttospeech = "^2.17.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.8.0"
+isort = "^5.13.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
